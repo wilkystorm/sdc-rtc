@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  id-token: write   # Required for OIDC
+  id-token: write
   contents: read
 
 env:
@@ -21,6 +21,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Debug OIDC token
+        run: |
+          echo "Requesting OIDC token..."
+          ID_TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
+          echo "Token received (first 80 chars): ${ID_TOKEN:0:80}..."
+          echo "----- Decoded payload -----"
+          echo $ID_TOKEN | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -46,12 +55,7 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          # Update the image in the deployment
           sed -i "s|image:.*|image: ${{ env.IMAGE }}|g" k8s/deployment.yaml
-          
-          # Apply the manifests
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
-          
-          # Wait for rollout
           kubectl rollout status deployment/sdc-rtc --timeout=180s
