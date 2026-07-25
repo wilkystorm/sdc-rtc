@@ -34,19 +34,19 @@ spec:
             limits:
               cpu: "500m"
               memory: "768Mi"
-          livenessProbe:
+          livenessProbe:  # Uses Actuator /actuator/health (no external calls)
             httpGet:
-              path: /
+              path: /actuator/health
               port: 8080
-            initialDelaySeconds: 90
-            periodSeconds: 20
+            initialDelaySeconds: 120
+            periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 6
-          readinessProbe:
+          readinessProbe:  # Uses Actuator /actuator/health (no external calls)
             httpGet:
-              path: /
+              path: /actuator/health
               port: 8080
-            initialDelaySeconds: 45
-            periodSeconds: 15
+            initialDelaySeconds: 60
+            periodSeconds: 20
             timeoutSeconds: 10
             failureThreshold: 6
