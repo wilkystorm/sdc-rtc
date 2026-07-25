@@ -22,6 +22,8 @@ metadata:
   namespace: default
   labels:
     app: sdc-rtc
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   type: LoadBalancer
   ports:
