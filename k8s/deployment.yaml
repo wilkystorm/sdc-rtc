@@ -16,36 +16,40 @@ spec:
         app: sdc-rtc
     spec:
       containers:
-      - name: sdc-rtc
-        image: sdc-rtc:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8080
-        env:
-        - name: XAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: xai-api-secret
-              key: XAI_API_KEY
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "500m"
-            memory: "768Mi"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: sdc-rtc
+          image: sdc-rtc:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: XAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: xai-api-secret
+                  key: XAI_API_KEY
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "768Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 6
 ---
 apiVersion: v1
 kind: Secret
@@ -55,4 +59,4 @@ metadata:
 type: Opaque
 data:
   # Base64 encoded XAI_API_KEY value should be placed here in production
-  XAI_API_KEY: eW91ci1hcGkta2V5LWhlcmU=  # replace with real base64(XAI_API_KEY)
+  XAI_API_KEY: "REPLACE_ME_WITH_BASE64_ENCODED_KEY"
