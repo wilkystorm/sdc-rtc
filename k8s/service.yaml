@@ -24,6 +24,7 @@ metadata:
     app: sdc-rtc
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: sg-064f0d393c19922f7
 spec:
   type: LoadBalancer
   ports:
